@@ -79,6 +79,36 @@ See `org-clock-csv-default-row-fmt' for an example."
 
 ;;;; Internal API:
 
+(defun org-clock-csv--find-category (element)
+  "Find the category of a headline ELEMENT, optionally recursing
+upwards until one is found.
+
+Returns an empty string if no category is found."
+  (let ((category (org-element-property :CATEGORY element))
+	(current element)
+	(curlvl  (org-element-property :level element)))
+    ;; If the headline does not have a category, recurse upwards
+    ;; through the parent headlines, checking if there is a category
+    ;; property in any of them.
+    (while (not category)
+      (setq current (if (equal curlvl 1)
+			(org-element-lineage current)
+		      (org-element-lineage current '(headline)))
+	    curlvl (- curlvl 1))
+      (setq category (org-element-property :CATEGORY current))
+      ;; If we get to the root of the org file with no category, just
+      ;; set it to the empty string.
+      ;;
+      ;; TODO: File-level categories are stored not as properties, but
+      ;; as keyword elements in the `org-data' structure. In order to
+      ;; extract them, it will probaby require a call to
+      ;; `org-element-map'. Since this could be an expensive operation
+      ;; on an org file with no headline-level categories, but a
+      ;; single file-level category, it would need to be cached.
+      (unless (equal 'headline (org-element-type current))
+	(setq category "")))
+    category))
+
 (defun org-clock-csv--parse-element (element)
   "Ingests clock elements and produces a plist of their relevant
 properties."
@@ -92,7 +122,6 @@ properties."
 	   ;; Find the first headline that contains this clock element.
 	   (parent-headline (org-element-lineage element '(headline)))
 	   (task (org-element-property :raw-value parent-headline))
-	   (level (org-element-property :level parent-headline))
 	   (effort (org-element-property :EFFORT parent-headline))
 	   ;; TODO: Handle tag inheritance, respecting the value of
 	   ;; `org-tags-exclude-from-inheritance'.
@@ -101,16 +130,7 @@ properties."
 	   (ishabit (when (equal "habit" (org-element-property
 					  :STYLE parent-headline))
 		      "t"))
-	   ;; TODO: Handle category inheritance correctly.
-	   ;; TODO: Handle top-level categories.
-	   (category (or (org-element-property
-			  :CATEGORY
-			  (if (> level 1)
-			      (org-element-lineage
-			       parent-headline
-			       (make-list (- level 1) 'headline))
-			    parent-headline))
-			 ""))
+	   (category (org-clock-csv--find-category parent-headline))
 	   (start (format "%d-%s-%s %s:%s"
 			  (org-element-property :year-start timestamp)
 			  (org-clock-csv--pad
