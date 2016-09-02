@@ -6,7 +6,6 @@
 ;; URL: https://github.com/atheriel/org-clock-csv
 ;; Keywords: org
 ;; Version: 0
-;; Package-Requires: ((emacs "24"))
 
 ;; This file is NOT part of GNU Emacs.
 
@@ -21,11 +20,25 @@
 ;; GNU General Public License for more details.
 
 ;; You should have received a copy of the GNU General Public License
-;; along with GNU Emacs; see the file COPYING.  If not, write to
-;; the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
-;; Boston, MA 02110-1301, USA.
+;; along with GNU Emacs. If not, see <http://www.gnu.org/licenses/>.
+
+;;; Commentary:
+
+;; This package makes use of the `org-element' API to extract clock
+;; entries from org files and convert them into CSV format. It is
+;; intended to facilitate clocked time analysis in external programs.
+
+;; In interactive mode, calling `org-clock-csv' will open a buffer
+;; with the parsed entries from the files in `org-agenda-files'. The
+;; function can also be called from lisp code with a file list
+;; argument, and there is an `org-clock-csv-batch' version that will
+;; output the CSV content to standard output (for use in batch mode).
 
 ;;; Code:
+
+(require 'org)
+(require 'org-agenda)
+(require 'org-element)
 
 ;;;; Configuration options:
 
@@ -141,6 +154,7 @@ When NO-CHECK is non-nil, skip checking if all files exist."
 
 ;;;; Public API:
 
+;;;###autoload
 (defun org-clock-csv (&optional infile)
   "Export clock entries to CSV format.
 
@@ -165,6 +179,7 @@ for use in batch mode."
 	    entries))
     (switch-to-buffer buffer)))
 
+;;;###autoload
 (defun org-clock-csv-batch (&optional infile)
   "Export clock entries in CSV format to standard output.
 
