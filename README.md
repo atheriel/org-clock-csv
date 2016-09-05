@@ -4,6 +4,15 @@
 and convert them into CSV format. It is intended to facilitate clocked time
 analysis in external programs.
 
+You can also
+[read the original blog post](http://unconj.ca/blog/exporting-clock-entries-from-org-mode-to-csv.html).
+
+## Installation [![MELPA](http://melpa.org/packages/org-clock-csv-badge.svg)](http://melpa.org/#/org-clock-csv)
+
+`org-clock-csv` is available from [MELPA](http://melpa.org/#/org-clock-csv). You
+can also install it manually by cloning the repository and adding the file to
+your `load-path`.
+
 ## Usage
 
 In interactive mode, calling `org-clock-csv` will open a buffer with the parsed
