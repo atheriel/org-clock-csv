@@ -5,7 +5,7 @@
 ;; Author: Aaron Jacobs <atheriel@gmail.com>
 ;; URL: https://github.com/atheriel/org-clock-csv
 ;; Keywords: org
-;; Version: 0
+;; Version: 1.0
 
 ;; This file is NOT part of GNU Emacs.
 
@@ -30,7 +30,7 @@
 
 ;; In interactive mode, calling `org-clock-csv' will open a buffer
 ;; with the parsed entries from the files in `org-agenda-files'. The
-;; function can also be called from lisp code with a file list
+;; function can also be called from Lisp code with a file list
 ;; argument, and there is an `org-clock-csv-batch' version that will
 ;; output the CSV content to standard output (for use in batch mode).
 
@@ -47,14 +47,18 @@
   :group 'external)
 
 (defcustom org-clock-csv-header "task,category,start,end,effort,ishabit,tags"
-  "Header for the CSV output. Be sure to keep this in sync with
-changes to `org-clock-csv-row-fmt'."
+  "Header for the CSV output.
+
+Be sure to keep this in sync with changes to
+`org-clock-csv-row-fmt'."
   :group 'org-clock-csv)
 
 (defcustom org-clock-csv-row-fmt #'org-clock-csv-default-row-fmt
   "Function to parse a plist of properties for each clock entry
-and produce a comma-separated CSV row. Be sure to keep this in
-sync with changes to `org-clock-csv-header'.
+and produce a comma-separated CSV row.
+
+Be sure to keep this in sync with changes to
+`org-clock-csv-header'.
 
 See `org-clock-csv-default-row-fmt' for an example."
   :group 'org-clock-csv)
@@ -74,7 +78,7 @@ See `org-clock-csv-default-row-fmt' for an example."
 ;;;; Utility functions:
 
 (defsubst org-clock-csv--pad (num)
-  "Adds a leading zero to a number less than 10."
+  "Add a leading zero when NUM is less than 10."
   (if (> num 10) num (format "%02d" num)))
 
 ;;;; Internal API:
@@ -110,7 +114,7 @@ Returns an empty string if no category is found."
     category))
 
 (defun org-clock-csv--parse-element (element)
-  "Ingests clock elements and produces a plist of their relevant
+  "Ingest clock ELEMENT and produces a plist of its relevant
 properties."
   (when (and (equal (org-element-type element) 'clock)
 	     ;; Only ingest closed, inactive clock elements.
@@ -176,7 +180,7 @@ When NO-CHECK is non-nil, skip checking if all files exist."
 
 ;;;###autoload
 (defun org-clock-csv (&optional infile)
-  "Export clock entries to CSV format.
+  "Export clock entries from INFILE to CSV format.
 
 When INFILE is a filename or list of filenames, export clock
 entries from these files. Otherwise, use `org-agenda-files'.
@@ -201,11 +205,11 @@ for use in batch mode."
 
 ;;;###autoload
 (defun org-clock-csv-batch (&optional infile)
-  "Export clock entries in CSV format to standard output.
+  "Export clock entries from INFILE in CSV format to standard output.
 
-This function is identical in function to `org-clock-csv'
-except that it directs output to `standard-output'. It is
-intended for use in batch mode."
+This function is identical in function to `org-clock-csv' except
+that it directs output to `standard-output'. It is intended for
+use in batch mode."
   (let* ((filelist (if (null infile) org-agenda-files
 		     (if (listp infile) infile (list infile))))
 	 (entries (org-clock-csv--get-entries filelist)))
