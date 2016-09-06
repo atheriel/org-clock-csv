@@ -189,7 +189,7 @@ See also `org-clock-csv-batch' for a function more appropriate
 for use in batch mode."
   (interactive)
   ;; TODO: Handle an OUTFILE argument.
-  (let* ((filelist (if (null infile) org-agenda-files
+  (let* ((filelist (if (null infile) (org-agenda-files)
 		     (if (listp infile) infile (list infile))))
 	 (buffer (get-buffer-create "*clock-entries-csv*"))
 	 (entries (org-clock-csv--get-entries filelist)))
@@ -210,7 +210,7 @@ for use in batch mode."
 This function is identical in function to `org-clock-csv' except
 that it directs output to `standard-output'. It is intended for
 use in batch mode."
-  (let* ((filelist (if (null infile) org-agenda-files
+  (let* ((filelist (if (null infile) (org-agenda-files)
 		     (if (listp infile) infile (list infile))))
 	 (entries (org-clock-csv--get-entries filelist)))
     (princ (concat org-clock-csv-header "\n"))
