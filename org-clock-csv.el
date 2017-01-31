@@ -71,14 +71,14 @@ See `org-clock-csv-default-row-fmt' for an example."
 (defun org-clock-csv-default-row-fmt (plist)
   "Default row formatting function."
   (mapconcat #'identity
-	     (list (org-clock-csv--escape (plist-get plist ':task))
-             (org-clock-csv--escape (plist-get plist ':category))
-		   (plist-get plist ':start)
-		   (plist-get plist ':end)
-		   (plist-get plist ':effort)
-		   (plist-get plist ':ishabit)
-		   (plist-get plist ':tags))
-	     ","))
+             (list (org-clock-csv--escape (plist-get plist ':task))
+                   (org-clock-csv--escape (plist-get plist ':category))
+                   (plist-get plist ':start)
+                   (plist-get plist ':end)
+                   (plist-get plist ':effort)
+                   (plist-get plist ':ishabit)
+                   (plist-get plist ':tags))
+             ","))
 
 ;;;; Utility functions:
 
@@ -103,16 +103,16 @@ upwards until one is found.
 
 Returns an empty string if no category is found."
   (let ((category (org-element-property :CATEGORY element))
-	(current element)
-	(curlvl  (org-element-property :level element)))
+        (current element)
+        (curlvl  (org-element-property :level element)))
     ;; If the headline does not have a category, recurse upwards
     ;; through the parent headlines, checking if there is a category
     ;; property in any of them.
     (while (not category)
       (setq current (if (equal curlvl 1)
-			(org-element-lineage current)
-		      (org-element-lineage current '(headline)))
-	    curlvl (- curlvl 1))
+                        (org-element-lineage current)
+                      (org-element-lineage current '(headline)))
+            curlvl (- curlvl 1))
       (setq category (org-element-property :CATEGORY current))
       ;; If we get to the root of the org file with no category, just
       ;; set it to the empty string.
@@ -124,58 +124,58 @@ Returns an empty string if no category is found."
       ;; on an org file with no headline-level categories, but a
       ;; single file-level category, it would need to be cached.
       (unless (equal 'headline (org-element-type current))
-	(setq category "")))
+        (setq category "")))
     category))
 
 (defun org-clock-csv--parse-element (element)
   "Ingest clock ELEMENT and produces a plist of its relevant
 properties."
   (when (and (equal (org-element-type element) 'clock)
-	     ;; Only ingest closed, inactive clock elements.
-	     (equal (org-element-property :status element) 'closed)
-	     (equal (org-element-property
-		     :type (org-element-property :value element))
-		    'inactive-range))
+             ;; Only ingest closed, inactive clock elements.
+             (equal (org-element-property :status element) 'closed)
+             (equal (org-element-property
+                     :type (org-element-property :value element))
+                    'inactive-range))
     (let* ((timestamp (org-element-property :value element))
-	   ;; Find the first headline that contains this clock element.
-	   (parent-headline (org-element-lineage element '(headline)))
-	   (task (org-element-property :raw-value parent-headline))
-	   (effort (org-element-property :EFFORT parent-headline))
-	   ;; TODO: Handle tag inheritance, respecting the value of
-	   ;; `org-tags-exclude-from-inheritance'.
-	   (tags (mapconcat #'identity
-			    (org-element-property :tags parent-headline) ":"))
-	   (ishabit (when (equal "habit" (org-element-property
-					  :STYLE parent-headline))
-		      "t"))
-	   (category (org-clock-csv--find-category parent-headline))
-	   (start (format "%d-%s-%s %s:%s"
-			  (org-element-property :year-start timestamp)
-			  (org-clock-csv--pad
-			   (org-element-property :month-start timestamp))
-			  (org-clock-csv--pad
-			   (org-element-property :day-start timestamp))
-			  (org-clock-csv--pad
-			   (org-element-property :hour-start timestamp))
-			  (org-clock-csv--pad
-			   (org-element-property :minute-start timestamp))))
-	   (end (format "%d-%s-%s %s:%s"
-			  (org-element-property :year-end timestamp)
-			  (org-clock-csv--pad
-			   (org-element-property :month-end timestamp))
-			  (org-clock-csv--pad
-			   (org-element-property :day-end timestamp))
-			  (org-clock-csv--pad
-			   (org-element-property :hour-end timestamp))
-			  (org-clock-csv--pad
-			   (org-element-property :minute-end timestamp)))))
+           ;; Find the first headline that contains this clock element.
+           (parent-headline (org-element-lineage element '(headline)))
+           (task (org-element-property :raw-value parent-headline))
+           (effort (org-element-property :EFFORT parent-headline))
+           ;; TODO: Handle tag inheritance, respecting the value of
+           ;; `org-tags-exclude-from-inheritance'.
+           (tags (mapconcat #'identity
+                            (org-element-property :tags parent-headline) ":"))
+           (ishabit (when (equal "habit" (org-element-property
+                                          :STYLE parent-headline))
+                      "t"))
+           (category (org-clock-csv--find-category parent-headline))
+           (start (format "%d-%s-%s %s:%s"
+                          (org-element-property :year-start timestamp)
+                          (org-clock-csv--pad
+                           (org-element-property :month-start timestamp))
+                          (org-clock-csv--pad
+                           (org-element-property :day-start timestamp))
+                          (org-clock-csv--pad
+                           (org-element-property :hour-start timestamp))
+                          (org-clock-csv--pad
+                           (org-element-property :minute-start timestamp))))
+           (end (format "%d-%s-%s %s:%s"
+                        (org-element-property :year-end timestamp)
+                        (org-clock-csv--pad
+                         (org-element-property :month-end timestamp))
+                        (org-clock-csv--pad
+                         (org-element-property :day-end timestamp))
+                        (org-clock-csv--pad
+                         (org-element-property :hour-end timestamp))
+                        (org-clock-csv--pad
+                         (org-element-property :minute-end timestamp)))))
       (list :task task
-	    :category category
-	    :start start
-	    :end end
-	    :effort effort
-	    :ishabit ishabit
-	    :tags tags))))
+            :category category
+            :start start
+            :end end
+            :effort effort
+            :ishabit ishabit
+            :tags tags))))
 
 (defun org-clock-csv--get-entries (filelist &optional no-check)
   "Retrieves clock entries from files in FILELIST.
@@ -186,9 +186,9 @@ When NO-CHECK is non-nil, skip checking if all files exist."
     ;; files exists first.
     (mapc (lambda (file) (cl-assert (file-exists-p file))) filelist))
   (cl-loop for file in filelist append
-	   (with-current-buffer (find-file file)
-	     (org-element-map (org-element-parse-buffer) 'clock
-	       #'org-clock-csv--parse-element nil nil))))
+           (with-current-buffer (find-file file)
+             (org-element-map (org-element-parse-buffer) 'clock
+               #'org-clock-csv--parse-element nil nil))))
 
 ;;;; Public API:
 
@@ -204,17 +204,17 @@ for use in batch mode."
   (interactive)
   ;; TODO: Handle an OUTFILE argument.
   (let* ((filelist (if (null infile) (org-agenda-files)
-		     (if (listp infile) infile (list infile))))
-	 (buffer (get-buffer-create "*clock-entries-csv*"))
-	 (entries (org-clock-csv--get-entries filelist)))
+                     (if (listp infile) infile (list infile))))
+         (buffer (get-buffer-create "*clock-entries-csv*"))
+         (entries (org-clock-csv--get-entries filelist)))
     (message "entries found: %d" (length entries))
     (with-current-buffer buffer
       (goto-char 0)
       (erase-buffer)
       (insert org-clock-csv-header "\n")
       (mapc (lambda (entry)
-	      (insert (concat (funcall org-clock-csv-row-fmt entry) "\n")))
-	    entries))
+              (insert (concat (funcall org-clock-csv-row-fmt entry) "\n")))
+            entries))
     (switch-to-buffer buffer)))
 
 ;;;###autoload
@@ -225,12 +225,12 @@ This function is identical in function to `org-clock-csv' except
 that it directs output to `standard-output'. It is intended for
 use in batch mode."
   (let* ((filelist (if (null infile) (org-agenda-files)
-		     (if (listp infile) infile (list infile))))
-	 (entries (org-clock-csv--get-entries filelist)))
+                     (if (listp infile) infile (list infile))))
+         (entries (org-clock-csv--get-entries filelist)))
     (princ (concat org-clock-csv-header "\n"))
     (mapc (lambda (entry)
-	    (princ (concat (funcall org-clock-csv-row-fmt entry) "\n")))
-	  entries)))
+            (princ (concat (funcall org-clock-csv-row-fmt entry) "\n")))
+          entries)))
 
 (provide 'org-clock-csv)
 
