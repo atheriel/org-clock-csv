@@ -40,6 +40,9 @@
 (require 'org-agenda)
 (require 'org-element)
 
+(eval-when-compile
+  (require 'cl-lib))
+
 ;;;; Configuration options:
 
 (defgroup org-clock-csv nil
