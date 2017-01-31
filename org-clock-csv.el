@@ -6,7 +6,7 @@
 ;; URL: https://github.com/atheriel/org-clock-csv
 ;; Keywords: calendar, data, org
 ;; Version: 1.0
-;; Package-Requires: ((org "8.3"))
+;; Package-Requires: ((org "8.3") (s "1.0"))
 
 ;; This file is NOT part of GNU Emacs.
 
@@ -37,6 +37,7 @@
 
 ;;; Code:
 
+(require 's)
 (require 'org)
 (require 'org-agenda)
 (require 'org-element)
@@ -70,8 +71,8 @@ See `org-clock-csv-default-row-fmt' for an example."
 (defun org-clock-csv-default-row-fmt (plist)
   "Default row formatting function."
   (mapconcat #'identity
-	     (list (plist-get plist ':task)
-		   (plist-get plist ':category)
+	     (list (org-clock-csv--escape (plist-get plist ':task))
+             (org-clock-csv--escape (plist-get plist ':category))
 		   (plist-get plist ':start)
 		   (plist-get plist ':end)
 		   (plist-get plist ':effort)
@@ -84,6 +85,15 @@ See `org-clock-csv-default-row-fmt' for an example."
 (defsubst org-clock-csv--pad (num)
   "Add a leading zero when NUM is less than 10."
   (if (> num 10) num (format "%02d" num)))
+
+(defun org-clock-csv--escape (str)
+  "Escapes STR so that it is suitable for a .csv file.
+
+Since we don't expect newlines in any of these strings, it is
+sufficient to escape commas and double quote characters."
+  (if (s-contains? "\"" str)
+      (concat "\"" (s-replace-all '(("\"" . "\"\"")) str) "\"")
+    (if (s-contains? "," str) (concat "\"" str "\"") str)))
 
 ;;;; Internal API:
 

@@ -1,0 +1,6 @@
+#+TITLE: Issue 2
+
+* TODO Upgrade motherboard, CPU & RAM
+  :LOGBOOK:
+  CLOCK: [2012-11-29 13:05]--[2012-11-29 16:56] =>  3:51
+  :END:

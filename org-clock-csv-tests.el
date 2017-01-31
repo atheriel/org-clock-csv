@@ -28,6 +28,11 @@
   "Docs."
   (org-clock-csv-should-match "tests/sample.org" "tests/sample.csv"))
 
+(ert-deftest test-issue-2 ()
+  "Test tasks with commas in them, as in issue #2."
+  (org-clock-csv-should-match "tests/issue-2.org" "tests/issue-2.csv"))
+
+
 ;; Local Variables:
 ;; coding: utf-8
 ;; End:
