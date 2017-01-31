@@ -4,8 +4,9 @@
 
 ;; Author: Aaron Jacobs <atheriel@gmail.com>
 ;; URL: https://github.com/atheriel/org-clock-csv
-;; Keywords: org
+;; Keywords: calendar, data, org
 ;; Version: 1.0
+;; Package-Requires: ((org "8.3"))
 
 ;; This file is NOT part of GNU Emacs.
 
