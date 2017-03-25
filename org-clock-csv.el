@@ -79,7 +79,7 @@ See `org-clock-csv-default-row-fmt' for an example."
 (defun org-clock-csv-default-row-fmt (plist)
   "Default row formatting function."
   (mapconcat #'identity
-             (list (mapconcat (lambda (e) (org-clock-csv--escape e)) (plist-get plist ':task) org-clock-csv-headline-separator)
+             (list (org-clock-csv--escape (mapconcat #'identity (plist-get plist ':task) org-clock-csv-headline-separator))
                    (org-clock-csv--escape (plist-get plist ':category))
                    (plist-get plist ':start)
                    (plist-get plist ':end)
