@@ -58,6 +58,14 @@ Be sure to keep this in sync with changes to
 `org-clock-csv-row-fmt'."
   :group 'org-clock-csv)
 
+(defcustom org-clock-csv-headline-separator "/"
+  "Character that separates each headline level within the \"task\" column."
+  :group 'org-clock-csv)
+
+(defcustom org-clock-csv-include-headline-ancestors t
+  "If non-nil, the task's headline ancestors will be include in the \"task\" column."
+  :group 'org-clock-csv)
+
 (defcustom org-clock-csv-row-fmt #'org-clock-csv-default-row-fmt
   "Function to parse a plist of properties for each clock entry
 and produce a comma-separated CSV row.
@@ -71,7 +79,7 @@ See `org-clock-csv-default-row-fmt' for an example."
 (defun org-clock-csv-default-row-fmt (plist)
   "Default row formatting function."
   (mapconcat #'identity
-             (list (org-clock-csv--escape (plist-get plist ':task))
+             (list (mapconcat (lambda (e) (org-clock-csv--escape e)) (plist-get plist ':task) org-clock-csv-headline-separator)
                    (org-clock-csv--escape (plist-get plist ':category))
                    (plist-get plist ':start)
                    (plist-get plist ':end)
@@ -127,6 +135,12 @@ Returns an empty string if no category is found."
         (setq category "")))
     category))
 
+(defun org-clock-csv--find-headlines (element)
+  "Returns a list of headline ancestors from closest parent to the farthest"
+  (let ((ph (org-element-lineage element '(headline))))
+    (if ph
+      (cons ph (org-clock-csv--find-headlines ph)))))
+
 (defun org-clock-csv--parse-element (element)
   "Ingest clock ELEMENT and produces a plist of its relevant
 properties."
@@ -138,17 +152,20 @@ properties."
                     'inactive-range))
     (let* ((timestamp (org-element-property :value element))
            ;; Find the first headline that contains this clock element.
-           (parent-headline (org-element-lineage element '(headline)))
-           (task (org-element-property :raw-value parent-headline))
-           (effort (org-element-property :EFFORT parent-headline))
+           (task-headline (org-element-lineage element '(headline)))
+           (headlines (cons task-headline
+                            (if org-clock-csv-include-headline-ancestors
+                                (org-clock-csv--find-headlines task-headline))))
+           (task (mapcar (lambda (h) (org-element-property :raw-value h)) (reverse headlines)))
+           (effort (org-element-property :EFFORT task-headline))
            ;; TODO: Handle tag inheritance, respecting the value of
            ;; `org-tags-exclude-from-inheritance'.
            (tags (mapconcat #'identity
-                            (org-element-property :tags parent-headline) ":"))
+                            (org-element-property :tags task-headline) ":"))
            (ishabit (when (equal "habit" (org-element-property
-                                          :STYLE parent-headline))
+                                          :STYLE task-headline))
                       "t"))
-           (category (org-clock-csv--find-category parent-headline))
+           (category (org-clock-csv--find-category task-headline))
            (start (format "%d-%s-%s %s:%s"
                           (org-element-property :year-start timestamp)
                           (org-clock-csv--pad
