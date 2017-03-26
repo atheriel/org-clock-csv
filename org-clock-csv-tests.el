@@ -32,6 +32,9 @@
   "Test tasks with commas in them, as in issue #2."
   (org-clock-csv-should-match "tests/issue-2.org" "tests/issue-2.csv"))
 
+(ert-deftest test-issue-3 ()
+  "Test tasks with headline ancestors, as in issue #3."
+  (org-clock-csv-should-match "tests/issue-3.org" "tests/issue-3.csv"))
 
 ;; Local Variables:
 ;; coding: utf-8
