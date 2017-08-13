@@ -45,6 +45,15 @@
 (eval-when-compile
   (require 'cl-lib))
 
+;; This is a simplified shim for `org-element-lineage', as needed for this
+;; package, for very old versions of `org':
+(when (version< (org-version) "8.3")
+  (defun org-element-lineage (blob &optional types)
+    (let ((up (org-element-property :parent blob)))
+      (while (and up (not (memq (org-element-type up) types)))
+        (setq up (org-element-property :parent up)))
+      up)))
+
 ;;;; Configuration options:
 
 (defgroup org-clock-csv nil
