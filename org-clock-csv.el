@@ -241,7 +241,7 @@ for use in batch mode."
     (switch-to-buffer buffer)))
 
 ;;;###autoload
-(defun org-clock-csv-batch ()
+(defun org-clock-csv-batch-and-exit ()
   "Export clock entries in CSV format to standard output.
 
 This function is identical in function to `org-clock-csv' except
@@ -264,6 +264,8 @@ use in batch mode."
       (backtrace)
       (message "Error converting clock entries to CSV format.")
       (kill-emacs 2))))
+
+(defalias 'org-clock-csv-batch 'org-clock-csv-batch-and-exit)
 
 (provide 'org-clock-csv)
 
