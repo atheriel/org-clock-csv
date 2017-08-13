@@ -241,19 +241,29 @@ for use in batch mode."
     (switch-to-buffer buffer)))
 
 ;;;###autoload
-(defun org-clock-csv-batch (&optional infile)
-  "Export clock entries from INFILE in CSV format to standard output.
+(defun org-clock-csv-batch ()
+  "Export clock entries in CSV format to standard output.
 
 This function is identical in function to `org-clock-csv' except
 that it directs output to `standard-output'. It is intended for
 use in batch mode."
-  (let* ((filelist (if (null infile) (org-agenda-files)
-                     (if (listp infile) infile (list infile))))
-         (entries (org-clock-csv--get-entries filelist)))
-    (princ (concat org-clock-csv-header "\n"))
-    (mapc (lambda (entry)
-            (princ (concat (funcall org-clock-csv-row-fmt entry) "\n")))
-          entries)))
+  (or noninteractive
+      (error "`org-clock-csv-batch' is designed for use in batch mode."))
+  (let* ((filelist (if (= (length command-line-args-left) 0)
+                       (org-agenda-files)
+                     command-line-args-left))
+         entries)
+    (unwind-protect
+        (progn
+          (setq entries (org-clock-csv--get-entries filelist t))
+          (princ (concat org-clock-csv-header "\n"))
+          (mapc (lambda (entry)
+                  (princ (concat (funcall org-clock-csv-row-fmt entry) "\n")))
+                entries)
+          (kill-emacs 0))
+      (backtrace)
+      (message "Error converting clock entries to CSV format.")
+      (kill-emacs 2))))
 
 (provide 'org-clock-csv)
 
