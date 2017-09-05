@@ -5,7 +5,7 @@
 ;; Author: Aaron Jacobs <atheriel@gmail.com>
 ;; URL: https://github.com/atheriel/org-clock-csv
 ;; Keywords: calendar, data, org
-;; Version: 1.0
+;; Version: 1.1
 ;; Package-Requires: ((org "8.3") (s "1.0"))
 
 ;; This file is NOT part of GNU Emacs.
@@ -32,7 +32,7 @@
 ;; In interactive mode, calling `org-clock-csv' will open a buffer
 ;; with the parsed entries from the files in `org-agenda-files'. The
 ;; function can also be called from Lisp code with a file list
-;; argument, and there is an `org-clock-csv-batch' version that will
+;; argument, and there is an `org-clock-csv-batch-and-exit' that will
 ;; output the CSV content to standard output (for use in batch mode).
 
 ;;; Code:
