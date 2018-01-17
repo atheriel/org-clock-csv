@@ -228,7 +228,6 @@ entries from these files. Otherwise, use `org-agenda-files'.
 See also `org-clock-csv-batch' for a function more appropriate
 for use in batch mode."
   (interactive)
-  ;; TODO: Handle an OUTFILE argument.
   (let* ((filelist (if (null infile) (org-agenda-files)
                      (if (listp infile) infile (list infile))))
          (buffer (get-buffer-create "*clock-entries-csv*"))
@@ -242,6 +241,19 @@ for use in batch mode."
               (insert (concat (funcall org-clock-csv-row-fmt entry) "\n")))
             entries))
     (switch-to-buffer buffer)))
+
+;;;###autoload
+(defun org-clock-export-to-csv-file (csv-file &optional infile)
+  "Export clock entries from INFILE to CSV-FILE.
+
+See `org-clock-csv' function for INFILE usage. If INFILE is nil,
+`org-agenda-files' is used as clock source."
+  (interactive "FCSV file: ")
+  (org-clock-csv infile)
+  (with-current-buffer "*clock-entries-csv*"
+    (rename-buffer csv-file)
+    (set-visited-file-name csv-file)
+    (save-buffer)))
 
 ;;;###autoload
 (defun org-clock-csv-batch-and-exit ()
