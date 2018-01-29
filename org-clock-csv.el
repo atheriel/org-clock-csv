@@ -190,12 +190,15 @@ properties."
                         (org-clock-csv--pad
                          (org-element-property :hour-end timestamp))
                         (org-clock-csv--pad
-                         (org-element-property :minute-end timestamp)))))
+                         (org-element-property :minute-end timestamp))))
+           (duration (org-element-property :duration element)))
       (list :task task
+            :headline task-headline
             :parents parents
             :category category
             :start start
             :end end
+            :duration duration
             :effort effort
             :ishabit ishabit
             :tags tags))))
