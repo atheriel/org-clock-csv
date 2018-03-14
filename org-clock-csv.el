@@ -212,7 +212,7 @@ When NO-CHECK is non-nil, skip checking if all files exist."
     ;; files exists first.
     (mapc (lambda (file) (cl-assert (file-exists-p file))) filelist))
   (cl-loop for file in filelist append
-           (with-current-buffer (find-file file)
+           (with-current-buffer (find-file-noselect file)
              (org-element-map (org-element-parse-buffer) 'clock
                #'org-clock-csv--parse-element nil nil))))
 
