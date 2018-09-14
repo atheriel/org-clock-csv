@@ -21,6 +21,8 @@ from lisp code with a file list argument.
 
 ## Usage in Batch Mode
 
+### Vanilla Emacs
+
 There is an `org-clock-csv-batch-and-exit` command that is designed for use in
 batch mode (essentially, scripting Emacs), which will write CSV content to
 standard output (and then exit). Calling this function is similar to running
@@ -76,6 +78,14 @@ follows:
         -l org-clock-csv -f org-clock-csv-batch-and-exit \
         "~/org/todo.org" \
         > clock-entries.csv
+
+### Cask
+
+If you are using [Cask](https://github.com/cask/cask) you can clone
+the repository and run `cask install` to install all the dependencies.
+To execute the `org-clock-csv-batch-and-exit` you can then simply run:
+
+    cask exec org-clock-csv <file> [files...]
 
 ## Contributing
 

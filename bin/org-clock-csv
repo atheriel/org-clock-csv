@@ -1,0 +1,3 @@
+#!/usr/bin/env bash
+
+emacs -L . -l org-clock-csv -batch -f org-clock-csv-batch-and-exit "$@"
