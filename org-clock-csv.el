@@ -235,7 +235,6 @@ for use in batch mode."
                      (if (listp infile) infile (list infile))))
          (buffer (get-buffer-create "*clock-entries-csv*"))
          (entries (org-clock-csv--get-entries filelist)))
-    (message "entries found: %d" (length entries))
     (with-current-buffer buffer
       (goto-char 0)
       (erase-buffer)
