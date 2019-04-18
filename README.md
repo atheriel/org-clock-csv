@@ -16,8 +16,12 @@ your `load-path`.
 ## Usage in Interactive Mode
 
 In interactive mode, calling `org-clock-csv` will open a buffer with the parsed
-entries from the files in `org-agenda-files`. The function can also be called
-from lisp code with a file list argument.
+entries from the files in `org-agenda-files`, while `org-clock-csv-to-file` will
+write this output to a file. Both functions take a prefix argument to read
+entries from the current buffer instead.
+
+Both functions can also be called from lisp code to specify an explicit file
+list argument.
 
 ## Usage in Batch Mode
 
