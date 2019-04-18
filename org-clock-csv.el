@@ -219,7 +219,7 @@ When NO-CHECK is non-nil, skip checking if all files exist."
 ;;;; Public API:
 
 ;;;###autoload
-(defun org-clock-csv (&optional infile no-switch)
+(defun org-clock-csv (&optional infile no-switch use-current)
   "Export clock entries from INFILE to CSV format.
 
 When INFILE is a filename or list of filenames, export clock
@@ -228,10 +228,19 @@ entries from these files. Otherwise, use `org-agenda-files'.
 When NO-SWITCH is non-nil, do not call `switch-to-buffer' on the
 rendered CSV output, simply return the buffer.
 
+USE-CURRENT takes the value of the prefix argument. When non-nil,
+use the current buffer for INFILE.
+
 See also `org-clock-csv-batch' for a function more appropriate
 for use in batch mode."
-  (interactive)
-  (let* ((filelist (if (null infile) (org-agenda-files)
+  (interactive "i\ni\nP")
+  (when use-current
+    (unless (equal major-mode 'org-mode)
+      (user-error "Not in an org buffer")))
+  (let* ((infile (if (and use-current buffer-file-name)
+                     (list buffer-file-name)
+                   infile))
+         (filelist (if (null infile) (org-agenda-files)
                      (if (listp infile) infile (list infile))))
          (buffer (get-buffer-create "*clock-entries-csv*"))
          (entries (org-clock-csv--get-entries filelist)))
@@ -246,12 +255,12 @@ for use in batch mode."
       (switch-to-buffer buffer))))
 
 ;;;###autoload
-(defun org-clock-csv-to-file (outfile &optional infile)
+(defun org-clock-csv-to-file (outfile &optional infile use-current)
   "Write clock entries from INFILE to OUTFILE in CSV format.
 
 See `org-clock-csv' for additional details."
-  (interactive "FFile: ")
-  (let ((buffer (org-clock-csv infile 'no-switch)))
+  (interactive "FFile: \ni\nP")
+  (let ((buffer (org-clock-csv infile 'no-switch use-current)))
     (with-current-buffer buffer
       (write-region nil nil outfile nil nil))
     (kill-buffer buffer)))
