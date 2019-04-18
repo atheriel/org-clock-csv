@@ -6,16 +6,7 @@
 
 (defun org-clock-csv-should-match (input output)
   "Test that clock entries in INPUT match the .csv OUTPUT file."
-  (let* ((entries (with-temp-buffer
-                    (insert-file-contents input)
-                    (org-mode)
-                    (org-element-map (org-element-parse-buffer) 'clock
-                      #'org-clock-csv--parse-element nil nil)))
-         (in (with-temp-buffer
-               (insert org-clock-csv-header "\n")
-               (mapc (lambda (entry)
-                       (insert (concat (funcall org-clock-csv-row-fmt entry) "\n")))
-                     entries)
+  (let* ((in (with-current-buffer (org-clock-csv input 'no-switch)
                (buffer-string)))
          (out (with-temp-buffer
                 (insert-file-contents output)
