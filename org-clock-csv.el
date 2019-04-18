@@ -219,16 +219,18 @@ When NO-CHECK is non-nil, skip checking if all files exist."
 ;;;; Public API:
 
 ;;;###autoload
-(defun org-clock-csv (&optional infile)
+(defun org-clock-csv (&optional infile no-switch)
   "Export clock entries from INFILE to CSV format.
 
 When INFILE is a filename or list of filenames, export clock
 entries from these files. Otherwise, use `org-agenda-files'.
 
+When NO-SWITCH is non-nil, do not call `switch-to-buffer' on the
+rendered CSV output, simply return the buffer.
+
 See also `org-clock-csv-batch' for a function more appropriate
 for use in batch mode."
   (interactive)
-  ;; TODO: Handle an OUTFILE argument.
   (let* ((filelist (if (null infile) (org-agenda-files)
                      (if (listp infile) infile (list infile))))
          (buffer (get-buffer-create "*clock-entries-csv*"))
@@ -241,7 +243,19 @@ for use in batch mode."
       (mapc (lambda (entry)
               (insert (concat (funcall org-clock-csv-row-fmt entry) "\n")))
             entries))
-    (switch-to-buffer buffer)))
+    (if no-switch buffer
+      (switch-to-buffer buffer))))
+
+;;;###autoload
+(defun org-clock-csv-to-file (outfile &optional infile)
+  "Write clock entries from INFILE to OUTFILE in CSV format.
+
+See `org-clock-csv' for additional details."
+  (interactive "FFile: ")
+  (let ((buffer (org-clock-csv infile 'no-switch)))
+    (with-current-buffer buffer
+      (write-region nil nil outfile nil nil))
+    (kill-buffer buffer)))
 
 ;;;###autoload
 (defun org-clock-csv-batch-and-exit ()
