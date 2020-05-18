@@ -4,14 +4,12 @@
 and convert them into CSV format. It is intended to facilitate clocked time
 analysis in external programs.
 
-You can also
-[read the original blog post](http://unconj.ca/blog/exporting-clock-entries-from-org-mode-to-csv.html).
+You can also [read the original blog post][1].
 
-## Installation [![MELPA](http://melpa.org/packages/org-clock-csv-badge.svg)](http://melpa.org/#/org-clock-csv)
+## Installation [![MELPA](http://melpa.org/packages/org-clock-csv-badge.svg)][2]
 
-`org-clock-csv` is available from [MELPA](http://melpa.org/#/org-clock-csv). You
-can also install it manually by cloning the repository and adding the file to
-your `load-path`.
+`org-clock-csv` is available from [MELPA][2].  You can also install it manually
+by cloning the repository and adding the file to your `load-path`.
 
 ## Usage in Interactive Mode
 
@@ -85,18 +83,17 @@ follows:
 
 ### Cask
 
-If you are using [Cask](https://github.com/cask/cask) you can clone
-the repository and run `cask install` to install all the dependencies.
-To execute the `org-clock-csv-batch-and-exit` you can then simply run:
+If you are using [Cask][3] you can clone the repository and run `cask install`
+to install all the dependencies.  To execute the `org-clock-csv-batch-and-exit`
+you can then simply run:
 
     cask exec org-clock-csv <file> [files...]
 
 ## Additional CSV formats
 
 The package has predefined variables `org-clock-csv-toggl-header` and
-`org-clock-csv-toggl-row-fmt` for CSV
-[files](https://support.toggl.com/en/articles/2216070-editing-and-uploading-a-csv-file)
-to be imported by Toggl.  To use it, simply add the following to your init file.
+`org-clock-csv-toggl-row-fmt` for exporting CSV [files][4] to be imported by
+Toggl.  To use it, simply add the following to your init file.
 
 ```elisp
 (setq-default org-clock-csv-header org-clock-csv-toggl-header)
@@ -111,3 +108,8 @@ parse as expected, feel free to open an issue.
 
 All code is available under the GPLv3, the same license as Emacs itself. See the
 `LICENSE` file for details.
+
+  [1]: http://unconj.ca/blog/exporting-clock-entries-from-org-mode-to-csv.html
+  [2]: http://melpa.org/#/org-clock-csv
+  [3]: https://github.com/cask/cask
+  [4]: https://support.toggl.com/en/articles/2216070-editing-and-uploading-a-csv-file
