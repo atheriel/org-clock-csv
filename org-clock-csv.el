@@ -70,7 +70,7 @@ Be sure to keep this in sync with changes to
 `org-clock-csv-row-fmt'."
   :group 'org-clock-csv)
 
-(defcustom org-clock-csv-toggl-header "Description,Project,Start Date,Start Time,Duration,Email"
+(defcustom org-clock-csv-toggl-header "Description,Start Date,Start Time,Duration,Email"
   "Header for the CSV output that is in sync with `org-clock-csv-toggl-row-fmt'"
   :group 'org-clock-csv)
 
@@ -104,15 +104,12 @@ See `org-clock-csv-default-row-fmt' for an example."
 (defun org-clock-csv-toggl-row-fmt (plist)
   "Toggl row formatting function."
   (let* ((task (org-clock-csv--escape (plist-get plist :task)))
-         (project (org-clock-csv--escape
-                   (or (car (plist-get plist :parents))
-                       task)))
          (start (date-to-time (plist-get plist :start)))
          (start-date (format-time-string "%F" start))
          (start-time (format-time-string "%H:%M:%S" start))
          (end (date-to-time (plist-get plist :end)))
          (duration (format-seconds "%h:%m:%s" (float-time (time-subtract end start)))))
-    (s-join "," (list task project start-date start-time duration user-mail-address))))
+    (s-join "," (list task start-date start-time duration user-mail-address))))
 
 ;;;; Utility functions:
 
