@@ -1,7 +1,7 @@
 # Export Clock Entries from org-mode to CSV
 
 `org-clock-csv` is an Emacs package that extracts clock entries from org files
-and convert them into CSV format. It is intended to facilitate clocked time
+and convert them into CSV format.  It is intended to facilitate clocked time
 analysis in external programs.
 
 You can also [read the original blog post][1].
@@ -15,7 +15,7 @@ by cloning the repository and adding the file to your `load-path`.
 
 In interactive mode, calling `org-clock-csv` will open a buffer with the parsed
 entries from the files in `org-agenda-files`, while `org-clock-csv-to-file` will
-write this output to a file. Both functions take a prefix argument to read
+write this output to a file.  Both functions take a prefix argument to read
 entries from the current buffer instead.
 
 Both functions can also be called from lisp code to specify an explicit file
@@ -27,7 +27,7 @@ list argument.
 
 There is an `org-clock-csv-batch-and-exit` command that is designed for use in
 batch mode (essentially, scripting Emacs), which will write CSV content to
-standard output (and then exit). Calling this function is similar to running
+standard output (and then exit).  Calling this function is similar to running
 tests with `ert`:
 
     $ emacs -batch -l path/to/org-clock-csv.el \
@@ -37,19 +37,19 @@ tests with `ert`:
 
 The command accepts a file list as a series of command line arguments (there is
 only one in the example, but more can be given), or uses the content of
-`org-agenda-files` if there are none. You may also want to pipe the output to a
+`org-agenda-files` if there are none.  You may also want to pipe the output to a
 file, as in the example.
 
-Since Emacs is running in batch mode, it will not load your `init.el` file. This
-has two consequences: (1) any `setq` or `customize` code you have written for
-`org` or for this package will not be loaded; and (2) Emacs has not been told
-where your third-party packages are located. So this invokation will likely give
-you the following error:
+Since Emacs is running in batch mode, it will not load your `init.el` file.
+This has two consequences: (1) any `setq` or `customize` code you have written
+for `org` or for this package will not be loaded; and (2) Emacs has not been
+told where your third-party packages are located.  So this invokation will
+likely give you the following error:
 
     Cannot open load file: No such file or directory, s
 
-Since the third-party `s` library is needed to run `org-clock-csv-batch`. You
-can resolve this issue in a few ways. If you don't mind using the default
+Since the third-party `s` library is needed to run `org-clock-csv-batch`.  You
+can resolve this issue in a few ways.  If you don't mind using the default
 settings of `org` and this package, the easiest is simply to let `package.el`
 (which you are probably using already) handle your third-party packages, as
 follows:
@@ -103,10 +103,10 @@ Toggl.  To use it, simply add the following to your init file.
 ## Contributing
 
 Contributions are welcome in the form of pull requests, although the scope of
-this package is intended to be small. If you have an org file that fails to
+this package is intended to be small.  If you have an org file that fails to
 parse as expected, feel free to open an issue.
 
-All code is available under the GPLv3, the same license as Emacs itself. See the
+All code is available under the GPLv3, the same license as Emacs itself.  See the
 `LICENSE` file for details.
 
   [1]: http://unconj.ca/blog/exporting-clock-entries-from-org-mode-to-csv.html
