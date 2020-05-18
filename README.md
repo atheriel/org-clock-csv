@@ -91,6 +91,18 @@ To execute the `org-clock-csv-batch-and-exit` you can then simply run:
 
     cask exec org-clock-csv <file> [files...]
 
+## Additional CSV formats
+
+The package has predefined variables `org-clock-csv-toggl-header` and
+`org-clock-csv-toggl-row-fmt` for CSV
+[files](https://support.toggl.com/en/articles/2216070-editing-and-uploading-a-csv-file)
+to be imported by Toggl.  To use it, simply add the following to your init file.
+
+```elisp
+(setq-default org-clock-csv-header org-clock-csv-toggl-header)
+(setq-default org-clock-csv-row-fmt 'org-clock-csv-toggl-row-fmt)
+```
+
 ## Contributing
 
 Contributions are welcome in the form of pull requests, although the scope of
