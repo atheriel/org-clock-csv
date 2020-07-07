@@ -150,7 +150,7 @@ Returns an empty string if no category is found."
     (if ph
       (cons ph (org-clock-csv--find-headlines ph)))))
 
-(defun org-clock-csv--parse-element (element)
+(defun org-clock-csv--parse-element (element title)
   "Ingest clock ELEMENT and produces a plist of its relevant
 properties."
   (when (and (equal (org-element-type element) 'clock)
@@ -198,6 +198,7 @@ properties."
       (list :task task
             :headline task-headline
             :parents parents
+            :title title
             :category category
             :start start
             :end end
@@ -205,6 +206,15 @@ properties."
             :effort effort
             :ishabit ishabit
             :tags tags))))
+
+(defun org-clock-csv--get-title (filename AST)
+  "Return the title or the filename of the document."
+  (let ((title (org-element-map AST 'keyword
+		     (lambda (elem) (if (string-equal (org-element-property :key elem) 'TITLE)
+					(org-element-property :value elem)
+				      filename))
+		     nil t)))
+    (if (equal nil title) filename title)))
 
 (defun org-clock-csv--get-entries (filelist &optional no-check)
   "Retrieves clock entries from files in FILELIST.
@@ -216,8 +226,11 @@ When NO-CHECK is non-nil, skip checking if all files exist."
     (mapc (lambda (file) (cl-assert (file-exists-p file))) filelist))
   (cl-loop for file in filelist append
            (with-current-buffer (find-file-noselect file)
-             (org-element-map (org-element-parse-buffer) 'clock
-               #'org-clock-csv--parse-element nil nil))))
+	     (let* ((AST (org-element-parse-buffer))
+		    (title (org-clock-csv--get-title file AST)))
+	       (org-element-map AST 'clock
+		 (lambda (c) (org-clock-csv--parse-element c title))
+		     nil nil)))))
 
 ;;;; Public API:
 

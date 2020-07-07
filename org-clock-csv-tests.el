@@ -14,7 +14,7 @@
     (should (equal in out))))
 
 (defvar org-clock-csv-header-all-props
-  "task,headline,parents,category,start,end,duration,effort,ishabit,tags")
+  "task,headline,parents,category,start,end,duration,effort,ishabit,tags,title")
 
 (defun org-clock-csv-all-props-row-fmt (plist)
   "Formatting function including all properties."
@@ -31,7 +31,8 @@
                    (plist-get plist ':duration)
                    (plist-get plist ':effort)
                    (plist-get plist ':ishabit)
-                   (plist-get plist ':tags))
+                   (plist-get plist ':tags)
+                   (plist-get plist ':title))
              ","))
 
 ;;; Tests:
@@ -53,6 +54,12 @@
 (ert-deftest test-issue-3 ()
   "Test tasks with headline ancestors, as in issue #3."
   (org-clock-csv-should-match "tests/issue-3.org" "tests/issue-3.csv"))
+
+(ert-deftest test-issue-26 ()
+  "Test file without title."
+  (let ((org-clock-csv-header org-clock-csv-header-all-props)
+        (org-clock-csv-row-fmt #'org-clock-csv-all-props-row-fmt))
+    (org-clock-csv-should-match "tests/issue-26.org" "tests/issue-26.csv")))
 
 ;; Local Variables:
 ;; coding: utf-8
