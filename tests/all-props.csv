@@ -1,3 +1,3 @@
-task,headline,parents,category,start,end,duration,effort,ishabit,tags
-Example Task,Example Task,,Category,2017-01-01 08:00,2017-01-01 09:00,1:00,1:00,,ex1:ex2
-Example Task,Example Task,,Category,2017-01-01 06:00,2017-01-01 07:00,1:00,1:00,,ex1:ex2
+task,headline,parents,category,start,end,duration,effort,ishabit,tags,title
+Example Task,Example Task,,Category,2017-01-01 08:00,2017-01-01 09:00,1:00,1:00,,ex1:ex2,Sample
+Example Task,Example Task,,Category,2017-01-01 06:00,2017-01-01 07:00,1:00,1:00,,ex1:ex2,Sample
