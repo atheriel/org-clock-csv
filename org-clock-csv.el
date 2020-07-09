@@ -114,11 +114,11 @@ sufficient to escape commas and double quote characters."
 
 ;;;; Internal API:
 
-(defun org-clock-csv--find-category (element)
+(defun org-clock-csv--find-category (element default)
   "Find the category of a headline ELEMENT, optionally recursing
 upwards until one is found.
 
-Returns an empty string if no category is found."
+Returns the DEFAULT file level category if none is found."
   (let ((category (org-element-property :CATEGORY element))
         (current element)
         (curlvl  (org-element-property :level element)))
@@ -132,16 +132,9 @@ Returns an empty string if no category is found."
             curlvl (- curlvl 1))
       (setq category (org-element-property :CATEGORY current))
       ;; If we get to the root of the org file with no category, just
-      ;; set it to the empty string.
-      ;;
-      ;; TODO: File-level categories are stored not as properties, but
-      ;; as keyword elements in the `org-data' structure. In order to
-      ;; extract them, it will probaby require a call to
-      ;; `org-element-map'. Since this could be an expensive operation
-      ;; on an org file with no headline-level categories, but a
-      ;; single file-level category, it would need to be cached.
+      ;; set it to the default file level category.
       (unless (equal 'headline (org-element-type current))
-        (setq category "")))
+        (setq category default)))
     category))
 
 (defun org-clock-csv--find-headlines (element)
@@ -150,7 +143,7 @@ Returns an empty string if no category is found."
     (if ph
       (cons ph (org-clock-csv--find-headlines ph)))))
 
-(defun org-clock-csv--parse-element (element title)
+(defun org-clock-csv--parse-element (element title default-category)
   "Ingest clock ELEMENT and produces a plist of its relevant
 properties."
   (when (and (equal (org-element-type element) 'clock)
@@ -173,7 +166,7 @@ properties."
            (ishabit (when (equal "habit" (org-element-property
                                           :STYLE task-headline))
                       "t"))
-           (category (org-clock-csv--find-category task-headline))
+           (category (org-clock-csv--find-category task-headline default-category))
            (start (format "%d-%s-%s %s:%s"
                           (org-element-property :year-start timestamp)
                           (org-clock-csv--pad
@@ -207,14 +200,15 @@ properties."
             :ishabit ishabit
             :tags tags))))
 
-(defun org-clock-csv--get-title (filename AST)
-  "Return the title or the filename of the document."
-  (let ((title (org-element-map AST 'keyword
-		     (lambda (elem) (if (string-equal (org-element-property :key elem) 'TITLE)
-					(org-element-property :value elem)
-				      filename))
-		     nil t)))
-    (if (equal nil title) filename title)))
+(defun org-clock-csv--get-org-data (property ast default)
+  "Return the PROPERTY of the `org-data' structure in the AST
+or the DEFAULT value if it does not exist."
+  (let ((value (org-element-map ast 'keyword
+		 (lambda (elem) (if (string-equal (org-element-property :key elem) property)
+				    (org-element-property :value elem)
+				  default))
+		 nil t)))
+    (if (equal nil value) default value)))
 
 (defun org-clock-csv--get-entries (filelist &optional no-check)
   "Retrieves clock entries from files in FILELIST.
@@ -226,10 +220,11 @@ When NO-CHECK is non-nil, skip checking if all files exist."
     (mapc (lambda (file) (cl-assert (file-exists-p file))) filelist))
   (cl-loop for file in filelist append
            (with-current-buffer (find-file-noselect file)
-	     (let* ((AST (org-element-parse-buffer))
-		    (title (org-clock-csv--get-title file AST)))
-	       (org-element-map AST 'clock
-		 (lambda (c) (org-clock-csv--parse-element c title))
+	     (let* ((ast (org-element-parse-buffer))
+		    (title (org-clock-csv--get-org-data 'TITLE ast file))
+		    (category (org-clock-csv--get-org-data 'CATEGORY ast "")))
+	       (org-element-map ast 'clock
+		 (lambda (c) (org-clock-csv--parse-element c title category))
 		     nil nil)))))
 
 ;;;; Public API:

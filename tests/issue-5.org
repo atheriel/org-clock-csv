@@ -1,0 +1,10 @@
+#+CATEGORY: Category
+
+* TODO Example Task                                                                        :ex1:ex2:
+  :PROPERTIES:
+  :Effort:   1:00
+  :END:
+  :LOGBOOK:
+  CLOCK: [2017-01-01 Sun 08:00]--[2017-01-01 Sun 09:00] =>  1:00
+  CLOCK: [2017-01-01 Sun 06:00]--[2017-01-01 Sun 07:00] =>  1:00
+  :END:
