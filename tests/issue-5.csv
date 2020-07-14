@@ -1,0 +1,3 @@
+task,parents,category,start,end,effort,ishabit,tags
+Task with no category,,Main category,2017-01-01 08:00,2017-01-01 09:00,1:00,,ex1:ex2
+Task with category,,Other category,2017-01-01 06:00,2017-01-01 07:00,1:00,,

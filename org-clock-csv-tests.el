@@ -57,7 +57,7 @@
 
 (ert-deftest test-issue-5 ()
   "Test file level category."
-  (org-clock-csv-should-match "tests/issue-5.org" "tests/sample.csv"))
+  (org-clock-csv-should-match "tests/issue-5.org" "tests/issue-5.csv"))
 
 (ert-deftest test-issue-26 ()
   "Test file without title."
