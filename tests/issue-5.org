@@ -1,3 +1,4 @@
+#+STARTUP: content
 #+CATEGORY: Main category
 
 * Task with no category                                             :ex1:ex2:

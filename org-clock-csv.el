@@ -205,10 +205,8 @@ properties."
 or the DEFAULT value if it does not exist."
   (let ((value (org-element-map ast 'keyword
 		 (lambda (elem) (if (string-equal (org-element-property :key elem) property)
-				    (org-element-property :value elem)
-				  default))
-		 nil t)))
-    (if (equal nil value) default value)))
+				    (org-element-property :value elem))))))
+    (if (equal nil value) default (car value))))
 
 (defun org-clock-csv--get-entries (filelist &optional no-check)
   "Retrieves clock entries from files in FILELIST.
