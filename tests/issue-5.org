@@ -1,0 +1,19 @@
+#+STARTUP: content
+#+CATEGORY: Main category
+
+* Task with no category                                             :ex1:ex2:
+  :PROPERTIES:
+  :Effort:   1:00
+  :END:
+  :LOGBOOK:
+  CLOCK: [2017-01-01 Sun 08:00]--[2017-01-01 Sun 09:00] =>  1:00
+  :END:
+
+* Task with category
+  :PROPERTIES:
+  :CATEGORY: Other category
+  :Effort:   1:00
+  :END:
+  :LOGBOOK:
+  CLOCK: [2017-01-01 Sun 06:00]--[2017-01-01 Sun 07:00] =>  1:00
+  :END:
