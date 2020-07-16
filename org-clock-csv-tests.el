@@ -59,6 +59,34 @@
   "Test file level category."
   (org-clock-csv-should-match "tests/issue-5.org" "tests/issue-5.csv"))
 
+(ert-deftest test-issue-24 ()
+  "Test nested tags."
+  (org-clock-csv-should-match "tests/issue-24.org" "tests/issue-24.csv"))
+
+(ert-deftest test-issue-24-nil ()
+  "Test local tags only."
+  (setq org-use-tag-inheritance nil)
+  (org-clock-csv-should-match "tests/issue-24.org" "tests/issue-24-nil.csv")
+  (setq org-use-tag-inheritance t))
+
+(ert-deftest test-issue-24-list ()
+  "Test tags in list."
+  (setq org-use-tag-inheritance (list "ex4" "ex1" "tag1"))
+  (org-clock-csv-should-match "tests/issue-24.org" "tests/issue-24-list.csv")
+  (setq org-use-tag-inheritance t))
+
+(ert-deftest test-issue-24-regexp ()
+  "Test tags in regexp."
+  (setq org-use-tag-inheritance "e.[13]")
+  (org-clock-csv-should-match "tests/issue-24.org" "tests/issue-24-regexp.csv")
+  (setq org-use-tag-inheritance t))
+
+(ert-deftest test-issue-24-exclude ()
+  "Test tags exclusion."
+  (setq org-tags-exclude-from-inheritance (list "tag2" "ex1"))
+  (org-clock-csv-should-match "tests/issue-24.org" "tests/issue-24-ex.csv")
+  (setq org-tags-exclude-from-inheritance nil))
+
 (ert-deftest test-issue-26 ()
   "Test file without title."
   (let ((org-clock-csv-header org-clock-csv-header-all-props)

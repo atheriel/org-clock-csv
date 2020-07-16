@@ -1,0 +1,32 @@
+#+STARTUP: content
+#+FILETAGS: :tag1:tag2:
+
+* Task A                                                            :ex1:ex2:
+  :LOGBOOK:
+  CLOCK: [2017-01-01 Sun 06:00]--[2017-01-01 Sun 07:00] =>  1:00
+  :END:
+** Task AB                                                             :ex3:
+  :LOGBOOK:
+  CLOCK: [2017-01-01 Sun 07:00]--[2017-01-01 Sun 08:00] =>  1:00
+  :END:
+*** Task ABC                                                          :ex4:
+:LOGBOOK:
+CLOCK: [2017-01-01 Sun 08:00]--[2017-01-01 Sun 09:00] =>  1:00
+:END:
+**** Task ABCD                                                       :ex5:
+:LOGBOOK:
+CLOCK: [2017-01-01 Sun 09:00]--[2017-01-01 Sun 10:00] =>  1:00
+:END:
+* Task B                                                                :ex2:
+** Task BA                                                             :ex1:
+:LOGBOOK:
+CLOCK: [2017-01-01 Sun 10:00]--[2017-01-01 Sun 11:00] =>  1:00
+:END:
+** Task BB
+:LOGBOOK:
+CLOCK: [2017-01-01 Sun 11:00]--[2017-01-01 Sun 12:00] =>  1:00
+:END:
+*** Task BBC                                                          :ex4:
+:LOGBOOK:
+CLOCK: [2017-01-01 Sun 12:00]--[2017-01-01 Sun 13:00] =>  1:00
+:END:
