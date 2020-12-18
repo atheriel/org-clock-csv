@@ -194,7 +194,8 @@ properties."
                          (org-element-property :hour-end timestamp))
                         (org-clock-csv--pad
                          (org-element-property :minute-end timestamp))))
-           (duration (org-element-property :duration element)))
+           (duration (org-element-property :duration element))
+           (properties (org-clock-csv--get-properties-plist element)))
       (list :task task
             :headline task-headline
             :parents parents
@@ -203,6 +204,7 @@ properties."
             :start start
             :end end
             :duration duration
+            :properties properties
             :effort effort
             :ishabit ishabit
             :tags tags))))
