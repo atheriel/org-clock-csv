@@ -159,13 +159,18 @@ Returns the DEFAULT file level category if none is found."
   (let ((ph (org-element-lineage element '(headline))))
     (if ph
       (cons ph (org-clock-csv--find-headlines ph)))))
+
 (defun org-clock-csv--get-properties-plist (element)
   "Returns a plist of the [inherited] properties drawer of an org element"
   ;; org-entry-properties returns an ALIST, but we don't want to have to handle
   ;; duplicate keys so we're going to `reduce' it to a plist.
+  (defvar el (org-element-property :begin element))
   (seq-reduce
    (lambda (acc pair) (plist-put acc (car pair) (cdr pair)))
-   (org-entry-properties (org-element-property :begin element)) nil))
+   (org-entry-properties el)
+   (seq-reduce
+    (lambda (acc key) (plist-put acc key (org-entry-get el key t)))
+    (org-buffer-property-keys) nil)))
 
 (defun org-clock-csv--parse-element (element title default-category)
   "Ingest clock ELEMENT and produces a plist of its relevant
