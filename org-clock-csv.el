@@ -112,6 +112,23 @@ sufficient to escape commas and double quote characters."
       (concat "\"" (s-replace-all '(("\"" . "\"\"")) str) "\"")
     (if (s-contains? "," str) (concat "\"" str "\"") str)))
 
+(defun org-clock-csv--read-property (plist property &optional default)
+  "Properties are parsed from the PROPERTIES drawer as a plist of key/value pairs.
+
+This function can be used in your csv-row-fmt function to extract custom properties.
+
+Example:
+(defun custom-org-clock-csv-row-fmt (plist)
+  \"Example custom row formatting function w/property access.\"
+  (mapconcat #'identity
+             (list (org-clock-csv--escape (plist-get plist ':task))
+                   (org-clock-csv--escape (s-join org-clock-csv-headline-separator (plist-get plist ':parents)))
+                   (org-clock-csv--escape (plist-get plist ':category))
+                   (org-clock-csv--escape (org-clock-csv--read-property plist \"CUSTOM_PROPERTY\"))
+             \",\"))
+"
+  (or (lax-plist-get (plist-get plist ':properties) property) (or default "")))
+
 ;;;; Internal API:
 
 (defun org-clock-csv--find-category (element default)
