@@ -1,0 +1,51 @@
+# -*- org-use-property-inheritance: t -*-
+* STARTED Example First Task
+:PROPERTIES:
+:CATEGORY: Category
+:CUSTOM_1: A Value
+:CUSTOM_2: 10
+:Effort:   1:00
+:END:
+:LOGBOOK:
+CLOCK: [2021-01-01 Fri 08:00]--[2021-01-01 Fri 09:00] =>  1:00
+CLOCK: [2021-01-01 Fri 06:00]--[2021-01-01 Fri 07:00] =>  1:00
+:END:
+
+This task has both =CUSTOM_1= and =CUSTOM_2= set.
+
+** STARTED Example First Child Task
+:PROPERTIES:
+:CUSTOM_2: 15
+:END:
+:LOGBOOK:
+CLOCK: [2021-01-04 Mon 06:00]--[2021-01-04 Mon 07:00] =>  1:00
+:END:
+
+This task inherits =CUSTOM_1= from its parent, but overrides =CUSTOM_2=.
+
+* STARTED Example Second Task
+:PROPERTIES:
+:CUSTOM_2: 5
+:END:
+:LOGBOOK:
+CLOCK: [2021-01-01 Fri 09:00]--[2021-01-01 Fri 09:30] =>  0:30
+:END:
+
+This task does not have =CUSTOM_1= set, and should use the default value provided by the call to ~org-clock-csv--read-property~.
+
+** STARTED Example Second Child Task
+:PROPERTIES:
+:CUSTOM_2: 20
+:END:
+:LOGBOOK:
+CLOCK: [2021-01-04 Mon 07:00]--[2021-01-04 Mon 07:30] =>  0:30
+:END:
+
+This task also does not set =CUSTOM_1=, but overrides the value on =CUSTOM_2=.
+
+* STARTED Example Third Task
+:LOGBOOK:
+CLOCK: [2021-01-04 Mon 07:30]--[2021-01-04 Mon 08:00] =>  0:30
+:END:
+
+This task has no custom properties. It should have the default value in =CUSTOM_1= and should have empty columns for =CUSTOM_2= in the result csv.

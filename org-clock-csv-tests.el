@@ -65,6 +65,22 @@
         (org-clock-csv-row-fmt #'org-clock-csv-all-props-row-fmt))
     (org-clock-csv-should-match "tests/issue-26.org" "tests/issue-26.csv")))
 
+(ert-deftest test-issue-23 ()
+  "Test custom properties."
+  (let ((org-clock-csv-header "task,CUSTOM_1,CUSTOM_2,start,end")
+        (org-clock-csv-row-fmt
+         (lambda (plist)
+           (mapconcat #'identity
+                      (list (org-clock-csv--escape (plist-get plist ':task))
+                            (org-clock-csv--escape
+                             (org-clock-csv--read-property plist "CUSTOM_1" "defaultvalue"))
+                            (org-clock-csv--escape
+                             (org-clock-csv--read-property plist "CUSTOM_2"))
+                            (plist-get plist ':start)
+                            (plist-get plist ':end))
+                      ","))))
+    (org-clock-csv-should-match "tests/issue-23.org" "tests/issue-23.csv")))
+
 ;; Local Variables:
 ;; coding: utf-8
 ;; End:

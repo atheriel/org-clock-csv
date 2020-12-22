@@ -1,0 +1,7 @@
+task,CUSTOM_1,CUSTOM_2,start,end
+Example First Task,A Value,10,2021-01-01 08:00,2021-01-01 09:00
+Example First Task,A Value,10,2021-01-01 06:00,2021-01-01 07:00
+Example First Child Task,A Value,15,2021-01-04 06:00,2021-01-04 07:00
+Example Second Task,defaultvalue,5,2021-01-01 09:00,2021-01-01 09:30
+Example Second Child Task,defaultvalue,20,2021-01-04 07:00,2021-01-04 07:30
+Example Third Task,defaultvalue,,2021-01-04 07:30,2021-01-04 08:00

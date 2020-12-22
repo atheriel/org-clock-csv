@@ -112,6 +112,23 @@ sufficient to escape commas and double quote characters."
       (concat "\"" (s-replace-all '(("\"" . "\"\"")) str) "\"")
     (if (s-contains? "," str) (concat "\"" str "\"") str)))
 
+(defun org-clock-csv--read-property (plist property &optional default)
+  "Properties are parsed from the PROPERTIES drawer as a plist of key/value pairs.
+
+This function can be used in your csv-row-fmt function to extract custom properties.
+
+Example:
+(defun custom-org-clock-csv-row-fmt (plist)
+  \"Example custom row formatting function w/property access.\"
+  (mapconcat #'identity
+             (list (org-clock-csv--escape (plist-get plist ':task))
+                   (org-clock-csv--escape (s-join org-clock-csv-headline-separator (plist-get plist ':parents)))
+                   (org-clock-csv--escape (plist-get plist ':category))
+                   (org-clock-csv--escape (org-clock-csv--read-property plist \"CUSTOM_PROPERTY\"))
+             \",\"))
+"
+  (or (lax-plist-get (plist-get plist ':properties) property) (or default "")))
+
 ;;;; Internal API:
 
 (defun org-clock-csv--find-category (element default)
@@ -142,6 +159,18 @@ Returns the DEFAULT file level category if none is found."
   (let ((ph (org-element-lineage element '(headline))))
     (if ph
       (cons ph (org-clock-csv--find-headlines ph)))))
+
+(defun org-clock-csv--get-properties-plist (element)
+  "Returns a plist of the [inherited] properties drawer of an org element"
+  ;; org-entry-properties returns an ALIST, but we don't want to have to handle
+  ;; duplicate keys so we're going to `reduce' it to a plist.
+  (let* ((el (org-element-property :begin element)))
+    (seq-reduce
+     (lambda (acc pair) (plist-put acc (car pair) (cdr pair)))
+     (org-entry-properties el)
+     (seq-reduce
+      (lambda (acc key) (plist-put acc key (org-entry-get el key t)))
+      (org-buffer-property-keys) nil))))
 
 (defun org-clock-csv--parse-element (element title default-category)
   "Ingest clock ELEMENT and produces a plist of its relevant
@@ -187,7 +216,8 @@ properties."
                          (org-element-property :hour-end timestamp))
                         (org-clock-csv--pad
                          (org-element-property :minute-end timestamp))))
-           (duration (org-element-property :duration element)))
+           (duration (org-element-property :duration element))
+           (properties (org-clock-csv--get-properties-plist element)))
       (list :task task
             :headline task-headline
             :parents parents
@@ -196,6 +226,7 @@ properties."
             :start start
             :end end
             :duration duration
+            :properties properties
             :effort effort
             :ishabit ishabit
             :tags tags))))
