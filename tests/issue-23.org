@@ -1,4 +1,6 @@
 # -*- org-use-property-inheritance: t -*-
+#+TODO: STARTED | DONE
+
 * STARTED Example First Task
 :PROPERTIES:
 :CATEGORY: Category
