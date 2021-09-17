@@ -160,6 +160,33 @@ Returns the DEFAULT file level category if none is found."
     (if ph
       (cons ph (org-clock-csv--find-headlines ph)))))
 
+(defun org-clock-csv--filter-inherited-tags (tags)
+  "Filter a list of TAGS according to
+`org-tags-exclude-from-inheritance' and `org-use-tag-inheritance'."
+  (let ((included-tags
+	 (cond ((not org-use-tag-inheritance) nil)
+	       ((eq org-use-tag-inheritance t) tags)
+	       ((listp org-use-tag-inheritance)
+		(mapcar (lambda (tag) (if (member tag org-use-tag-inheritance) tag)) tags))
+	       ((stringp org-use-tag-inheritance)
+		(mapcar (lambda (tag) (if (string-match org-use-tag-inheritance tag) tag)) tags)))))
+    (if (not org-tags-exclude-from-inheritance)
+	included-tags
+      (cl-set-difference included-tags org-tags-exclude-from-inheritance :test #'equal))))
+
+(defun org-clock-csv--find-tags (headlines default)
+  "Search tags in HEADLINES respecting
+`org-tags-exclude-from-inheritance' and `org-use-tag-inheritance'.
+DEFAULT tags are also checked against those variables.
+
+The tags of the first headline are always added."
+  (remove nil (append (org-clock-csv--filter-inherited-tags
+		       (append (split-string default ":" t)
+			       (apply #'append ; flatten
+				      (mapcar (lambda (headline) (org-element-property :tags headline))
+					      (reverse (cdr headlines))))))
+		      (org-element-property :tags (car headlines)))))
+
 (defun org-clock-csv--get-properties-plist (element)
   "Returns a plist of the [inherited] properties drawer of an org element"
   ;; org-entry-properties returns an ALIST, but we don't want to have to handle
@@ -172,7 +199,7 @@ Returns the DEFAULT file level category if none is found."
       (lambda (acc key) (plist-put acc key (org-entry-get el key t)))
       (org-buffer-property-keys) nil))))
 
-(defun org-clock-csv--parse-element (element title default-category)
+(defun org-clock-csv--parse-element (element title default-category default-tags)
   "Ingest clock ELEMENT and produces a plist of its relevant
 properties."
   (when (and (equal (org-element-type element) 'clock)
@@ -188,10 +215,8 @@ properties."
            (task (car headlines-values))
            (parents (reverse (cdr headlines-values)))
            (effort (org-element-property :EFFORT task-headline))
-           ;; TODO: Handle tag inheritance, respecting the value of
-           ;; `org-tags-exclude-from-inheritance'.
            (tags (mapconcat #'identity
-                            (org-element-property :tags task-headline) ":"))
+                            (org-clock-csv--find-tags headlines default-tags) ":"))
            (ishabit (when (equal "habit" (org-element-property
                                           :STYLE task-headline))
                       "t"))
@@ -236,8 +261,9 @@ properties."
 or the DEFAULT value if it does not exist."
   (let ((value (org-element-map ast 'keyword
 		 (lambda (elem) (if (string-equal (org-element-property :key elem) property)
-				    (org-element-property :value elem))))))
-    (if (equal nil value) default (car value))))
+				    (org-element-property :value elem)))
+		 nil t)))
+    (if (equal nil value) default value)))
 
 (defun org-clock-csv--get-entries (filelist &optional no-check)
   "Retrieves clock entries from files in FILELIST.
@@ -251,9 +277,10 @@ When NO-CHECK is non-nil, skip checking if all files exist."
            (with-current-buffer (find-file-noselect file)
 	     (let* ((ast (org-element-parse-buffer))
 		    (title (org-clock-csv--get-org-data 'TITLE ast file))
-		    (category (org-clock-csv--get-org-data 'CATEGORY ast "")))
+		    (category (org-clock-csv--get-org-data 'CATEGORY ast ""))
+		    (tags (org-clock-csv--get-org-data 'FILETAGS ast "")))
 	       (org-element-map ast 'clock
-		 (lambda (c) (org-clock-csv--parse-element c title category))
+		 (lambda (c) (org-clock-csv--parse-element c title category tags))
 		     nil nil)))))
 
 ;;;; Public API:
